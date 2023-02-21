@@ -31,10 +31,14 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             if (ModelState.IsValid)
             {
                 // Add to DB
-                StudentDb.Add(p, context);          // Prepares insert
-                await context.SaveChangesAsync();   // Executes pending statements
+                //Mark the object as inserted
+                StudentDb.Add(p, context);
 
-                ViewData["Message"] = $"{p.Name} was added!";
+                //Send insert query to database
+                await context.SaveChangesAsync();
+
+                ViewData["Message"] = $"{p.Name} was added succesfully!";
+
                 return View();
             }
 
@@ -42,10 +46,10 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             return View(p);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             //get the product by id
-            Student? p = StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
             //show it on web page
             if (p == null)
@@ -57,23 +61,28 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Student p)
+        public async Task<IActionResult> Edit(Student p)
         {
             if (ModelState.IsValid)
             {
+                //Mark the object as updated
                 StudentDb.Update(context, p);
-                //context.SaveChangesAsync();
+
+                //Send update query to database
+                await context.SaveChangesAsync();
 
                 TempData["Message"] = $"{p.Name} was updated successfully!";
+
                 return RedirectToAction("Index");
             }
+
             //return view with errors
             return View(p);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            Student? p = StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
             if (p == null)
             {
@@ -84,23 +93,25 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Get Product from database
-            Student? p = StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
             if (p != null)
             {
+                //Mark the object as deleted
                 StudentDb.Delete(context, p);
 
-                context.SaveChangesAsync();
+                //Send delete query to database
+                await context.SaveChangesAsync();
+
                 TempData["Message"] = $"{p.Name} was deleted successfully!";
 
                 return RedirectToAction("Index");
             }
 
             TempData["Message"] = $"This game was already deleted!";
-            
 
             return RedirectToAction("Index");
         }
