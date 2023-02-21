@@ -4,10 +4,13 @@ namespace CPW219_CRUD_Troubleshooting.Models
 {
     public static class StudentDb
     {
-        public static Student Add(Student stu, SchoolContext context)
+        public static async Task<Student> Add(Student stu, SchoolContext context)
         {
             //Mark the object as inserted
             context.Students.Add(stu);
+
+            //Send insert query to database
+            await context.SaveChangesAsync();
 
             return stu;
         }
@@ -26,19 +29,23 @@ namespace CPW219_CRUD_Troubleshooting.Models
             return stu;
         }
 
-        public static void Update(SchoolContext context, Student stu)
+        public static async Task Update(SchoolContext context, Student stu)
         {
             //Mark the object as updated
             context.Students.Update(stu);
 
+            //Send update query to database
+            await context.SaveChangesAsync();
+
         }
 
-        public static void Delete(SchoolContext context, Student stu)
+        public static async Task Delete(SchoolContext context, Student stu)
         {
             //Mark the object as deleted
             context.Students.Remove(stu);
+
+            //Send delete query to database
+            await context.SaveChangesAsync();
         }
-
-
     }
 }

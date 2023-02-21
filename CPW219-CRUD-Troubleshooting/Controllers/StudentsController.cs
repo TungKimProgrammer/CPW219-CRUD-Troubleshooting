@@ -31,11 +31,7 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             if (ModelState.IsValid)
             {
                 // Add to DB
-                //Mark the object as inserted
-                StudentDb.Add(stu, context);
-
-                //Send insert query to database
-                await context.SaveChangesAsync();
+                await StudentDb.Add(stu, context);
 
                 ViewData["Message"] = $"{stu.Name} was added succesfully!";
 
@@ -49,64 +45,56 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             //get the product by id
-            Student? studentToUpdate = await StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
             //show it on web page
-            if (studentToUpdate == null)
+            if (p == null)
             {
                 return NotFound();
             }
 
-            return View(studentToUpdate);
+            return View(p);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Student studentToUpdate)
+        public async Task<IActionResult> Edit(Student p)
         {
             if (ModelState.IsValid)
             {
-                //Mark the object as updated
-                StudentDb.Update(context, studentToUpdate);
+                await StudentDb.Update(context, p);
 
-                //Send update query to database
-                await context.SaveChangesAsync();
-
-                TempData["Message"] = $"{studentToUpdate.Name} was updated successfully!";
+                TempData["Message"] = $"{p.Name} was updated successfully!";
 
                 return RedirectToAction("Index");
             }
 
             //return view with errors
-            return View(studentToUpdate);
+            return View(p);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            Student? studentToDelete = await StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
-            if (studentToDelete == null)
+            if (p == null)
             {
                 return NotFound();
             }
 
-            return View(studentToDelete);
+            return View(p);
         }
 
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Get Product from database
-            Student? studentToDelete = await StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
-            if (studentToDelete != null)
+            if (p != null)
             {
-                //Mark the object as deleted
-                StudentDb.Delete(context, studentToDelete);
+                await StudentDb.Delete(context, p);
 
-                //Send delete query to database
-                await context.SaveChangesAsync();
-
-                TempData["Message"] = $"{studentToDelete.Name} was deleted successfully!";
+                TempData["Message"] = $"{p.Name} was deleted successfully!";
 
                 return RedirectToAction("Index");
             }
