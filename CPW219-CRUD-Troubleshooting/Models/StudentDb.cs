@@ -1,41 +1,51 @@
-﻿namespace CPW219_CRUD_Troubleshooting.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace CPW219_CRUD_Troubleshooting.Models
 {
     public static class StudentDb
     {
-        public static Student Add(Student p, SchoolContext db)
+        public static async Task<Student> Add(Student stu, SchoolContext context)
         {
-            //Add student to context
-            db.Students.Add(p);
-            return p;
+            //Mark the object as inserted
+            context.Students.Add(stu);
+
+            //Send insert query to database
+            await context.SaveChangesAsync();
+
+            return stu;
         }
 
-        public static List<Student> GetStudents(SchoolContext context)
+        public static async Task<List<Student>> GetStudents(SchoolContext context)
         {
-            return (from s in context.Students
-                    select s).ToList();
+            return await (from s in context.Students
+                          select s).ToListAsync();
         }
 
-        public static Student GetStudent(SchoolContext context, int id)
+        public static async Task<Student> GetStudent(SchoolContext context, int id)
         {
-            Student p2 = context
-                            .Students
-                            .Where(s => s.StudentId == id)
-                            .Single();
-            return p2;
+            Student? stu = await context.Students
+                                       .Where(s => s.StudentId == id)
+                                       .SingleOrDefaultAsync();
+            return stu;
         }
 
-        public static void Delete(SchoolContext context, Student p)
+        public static async Task Update(SchoolContext context, Student stu)
         {
-            context.Students.Update(p);
+            //Mark the object as updated
+            context.Students.Update(stu);
+
+            //Send update query to database
+            await context.SaveChangesAsync();
+
         }
 
-        public static void Update(SchoolContext context, Student p)
+        public static async Task Delete(SchoolContext context, Student stu)
         {
             //Mark the object as deleted
-            context.Students.Remove(p);
+            context.Students.Remove(stu);
 
             //Send delete query to database
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

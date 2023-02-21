@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CPW219_CRUD_Troubleshooting.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CPW219_CRUD_Troubleshooting.Models
 {

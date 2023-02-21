@@ -1,5 +1,7 @@
 ﻿using CPW219_CRUD_Troubleshooting.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace CPW219_CRUD_Troubleshooting.Controllers
 {
@@ -12,10 +14,10 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             context = dbContext;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Student> products = StudentDb.GetStudents(context);
-            return View();
+            List<Student> products = await StudentDb.GetStudents(context);
+            return View(products);
         }
 
         public IActionResult Create()
@@ -24,54 +26,80 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Student p)
+        public async Task<IActionResult> Create(Student stu)
         {
             if (ModelState.IsValid)
             {
-                StudentDb.Add(p, context);
-                ViewData["Message"] = $"{p.Name} was added!";
+                // Add to DB
+                await StudentDb.Add(stu, context);
+
+                ViewData["Message"] = $"{stu.Name} was added succesfully!";
+
                 return View();
             }
 
             //Show web page with errors
+            return View(stu);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            //get the product by id
+            Student? p = await StudentDb.GetStudent(context, id);
+
+            //show it on web page
+            if (p == null)
+            {
+                return NotFound();
+            }
+
             return View(p);
         }
 
-        public IActionResult Edit(int id)
-        {
-            //get the product by id
-            Student p = StudentDb.GetStudent(context, id);
-
-            //show it on web page
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult Edit(Student p)
+        public async Task<IActionResult> Edit(Student p)
         {
             if (ModelState.IsValid)
             {
-                StudentDb.Update(context, p);
-                ViewData["Message"] = "Product Updated!";
-                return View(p);
+                await StudentDb.Update(context, p);
+
+                TempData["Message"] = $"{p.Name} was updated successfully!";
+
+                return RedirectToAction("Index");
             }
+
             //return view with errors
             return View(p);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            Student p = StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
+
+            if (p == null)
+            {
+                return NotFound();
+            }
+
             return View(p);
         }
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirm(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Get Product from database
-            Student p = StudentDb.GetStudent(context, id);
+            Student? p = await StudentDb.GetStudent(context, id);
 
-            StudentDb.Delete(context, p);
+            if (p != null)
+            {
+                await StudentDb.Delete(context, p);
+
+                TempData["Message"] = $"{p.Name} was deleted successfully!";
+
+                return RedirectToAction("Index");
+            }
+
+            TempData["Message"] = $"This game was already deleted!";
 
             return RedirectToAction("Index");
         }
