@@ -1,5 +1,6 @@
 ﻿using CPW219_CRUD_Troubleshooting.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace CPW219_CRUD_Troubleshooting.Controllers
@@ -47,7 +48,12 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             Student p = StudentDb.GetStudent(context, id);
 
             //show it on web page
-            return View();
+            if (p == null)
+            {
+                return NotFound();
+            }
+
+            return View(p);
         }
 
         [HttpPost]
@@ -56,8 +62,10 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
             if (ModelState.IsValid)
             {
                 StudentDb.Update(context, p);
-                ViewData["Message"] = "Product Updated!";
-                return View(p);
+                //context.SaveChangesAsync();
+
+                TempData["Message"] = $"{p.Name} was updated successfully!";
+                return RedirectToAction("Index");
             }
             //return view with errors
             return View(p);
