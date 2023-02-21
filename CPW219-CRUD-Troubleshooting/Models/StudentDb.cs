@@ -1,4 +1,6 @@
-﻿namespace CPW219_CRUD_Troubleshooting.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace CPW219_CRUD_Troubleshooting.Models
 {
     public static class StudentDb
     {
@@ -9,10 +11,10 @@
             return p;
         }
 
-        public static List<Student> GetStudents(SchoolContext context)
+        public static async Task<List<Student>> GetStudents(SchoolContext context)
         {
-            return (from s in context.Students
-                    select s).ToList();
+            return await (from s in context.Students
+                          select s).ToListAsync();
         }
 
         public static Student GetStudent(SchoolContext context, int id)
