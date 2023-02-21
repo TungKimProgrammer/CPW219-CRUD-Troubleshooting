@@ -9,6 +9,7 @@ namespace CPW219_CRUD_Troubleshooting.Models
 
         public string Name { get; set; } = null!;
 
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
     }
 }
