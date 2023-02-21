@@ -19,16 +19,16 @@ namespace CPW219_CRUD_Troubleshooting.Models
 
         public static Student GetStudent(SchoolContext context, int id)
         {
-            Student p2 = context
+            Student? p2 = context
                             .Students
                             .Where(s => s.StudentId == id)
-                            .Single();
+                            .SingleOrDefault();
             return p2;
         }
 
         public static void Delete(SchoolContext context, Student p)
         {
-            context.Students.Update(p);
+            context.Students.Remove(p);
         }
 
         public static void Update(SchoolContext context, Student p)

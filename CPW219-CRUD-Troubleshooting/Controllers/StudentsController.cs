@@ -45,7 +45,7 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         public IActionResult Edit(int id)
         {
             //get the product by id
-            Student p = StudentDb.GetStudent(context, id);
+            Student? p = StudentDb.GetStudent(context, id);
 
             //show it on web page
             if (p == null)
@@ -73,17 +73,34 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
 
         public IActionResult Delete(int id)
         {
-            Student p = StudentDb.GetStudent(context, id);
+            Student? p = StudentDb.GetStudent(context, id);
+
+            if (p == null)
+            {
+                return NotFound();
+            }
+
             return View(p);
         }
 
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirm(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             //Get Product from database
-            Student p = StudentDb.GetStudent(context, id);
+            Student? p = StudentDb.GetStudent(context, id);
 
-            StudentDb.Delete(context, p);
+            if (p != null)
+            {
+                StudentDb.Delete(context, p);
+
+                context.SaveChangesAsync();
+                TempData["Message"] = $"{p.Name} was deleted successfully!";
+
+                return RedirectToAction("Index");
+            }
+
+            TempData["Message"] = $"This game was already deleted!";
+            
 
             return RedirectToAction("Index");
         }
