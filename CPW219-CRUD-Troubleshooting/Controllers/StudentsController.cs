@@ -26,87 +26,87 @@ namespace CPW219_CRUD_Troubleshooting.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Student p)
+        public async Task<IActionResult> Create(Student stu)
         {
             if (ModelState.IsValid)
             {
                 // Add to DB
                 //Mark the object as inserted
-                StudentDb.Add(p, context);
+                StudentDb.Add(stu, context);
 
                 //Send insert query to database
                 await context.SaveChangesAsync();
 
-                ViewData["Message"] = $"{p.Name} was added succesfully!";
+                ViewData["Message"] = $"{stu.Name} was added succesfully!";
 
                 return View();
             }
 
             //Show web page with errors
-            return View(p);
+            return View(stu);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             //get the product by id
-            Student? p = await StudentDb.GetStudent(context, id);
+            Student? studentToUpdate = await StudentDb.GetStudent(context, id);
 
             //show it on web page
-            if (p == null)
+            if (studentToUpdate == null)
             {
                 return NotFound();
             }
 
-            return View(p);
+            return View(studentToUpdate);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Student p)
+        public async Task<IActionResult> Edit(Student studentToUpdate)
         {
             if (ModelState.IsValid)
             {
                 //Mark the object as updated
-                StudentDb.Update(context, p);
+                StudentDb.Update(context, studentToUpdate);
 
                 //Send update query to database
                 await context.SaveChangesAsync();
 
-                TempData["Message"] = $"{p.Name} was updated successfully!";
+                TempData["Message"] = $"{studentToUpdate.Name} was updated successfully!";
 
                 return RedirectToAction("Index");
             }
 
             //return view with errors
-            return View(p);
+            return View(studentToUpdate);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            Student? p = await StudentDb.GetStudent(context, id);
+            Student? studentToDelete = await StudentDb.GetStudent(context, id);
 
-            if (p == null)
+            if (studentToDelete == null)
             {
                 return NotFound();
             }
 
-            return View(p);
+            return View(studentToDelete);
         }
 
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             //Get Product from database
-            Student? p = await StudentDb.GetStudent(context, id);
+            Student? studentToDelete = await StudentDb.GetStudent(context, id);
 
-            if (p != null)
+            if (studentToDelete != null)
             {
                 //Mark the object as deleted
-                StudentDb.Delete(context, p);
+                StudentDb.Delete(context, studentToDelete);
 
                 //Send delete query to database
                 await context.SaveChangesAsync();
 
-                TempData["Message"] = $"{p.Name} was deleted successfully!";
+                TempData["Message"] = $"{studentToDelete.Name} was deleted successfully!";
 
                 return RedirectToAction("Index");
             }
