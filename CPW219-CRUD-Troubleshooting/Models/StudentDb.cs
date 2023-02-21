@@ -26,11 +26,6 @@ namespace CPW219_CRUD_Troubleshooting.Models
             return p2;
         }
 
-        public static void Delete(SchoolContext context, Student p)
-        {
-            context.Students.Remove(p);
-        }
-
         public static void Update(SchoolContext context, Student p)
         {
             //Mark the object as deleted
@@ -41,5 +36,12 @@ namespace CPW219_CRUD_Troubleshooting.Models
 
             //return p;
         }
+
+        public static void Delete(SchoolContext context, Student p)
+        {
+            context.Students.Remove(p);
+        }
+
+
     }
 }
